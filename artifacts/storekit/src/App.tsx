@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ClerkProvider } from "@clerk/react";
@@ -10,42 +11,50 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { pageVariants } from "@/lib/animations";
 import NewsletterPopup from "@/components/NewsletterPopup";
 import BackToTop from "@/components/BackToTop";
-import NotFound from "@/pages/not-found";
-import HomePage from "@/pages/HomePage";
-import CollectionsPage from "@/pages/CollectionsPage";
-import CollectionDetailPage from "@/pages/CollectionDetailPage";
-import ProductDetailPage from "@/pages/ProductDetailPage";
-import CartPage from "@/pages/CartPage";
-import CheckoutPage from "@/pages/CheckoutPage";
-import OrderConfirmationPage from "@/pages/OrderConfirmationPage";
-import SearchPage from "@/pages/SearchPage";
-import AccountPage from "@/pages/AccountPage";
-import AccountOrdersPage from "@/pages/AccountOrdersPage";
-import AccountWishlistPage from "@/pages/AccountWishlistPage";
-import AboutPage from "@/pages/AboutPage";
-import LookbookPage from "@/pages/LookbookPage";
-import SignInPage from "@/pages/SignInPage";
-import SignUpPage from "@/pages/SignUpPage";
-import AdminLoginPage from "@/pages/admin/AdminLoginPage";
-import AdminDashboardPage from "@/pages/admin/AdminDashboardPage";
-import AdminProductsPage from "@/pages/admin/AdminProductsPage";
-import AdminProductFormPage from "@/pages/admin/AdminProductFormPage";
-import AdminCollectionsPage from "@/pages/admin/AdminCollectionsPage";
-import AdminCollectionFormPage from "@/pages/admin/AdminCollectionFormPage";
-import AdminOrdersPage from "@/pages/admin/AdminOrdersPage";
-import AdminOrderDetailPage from "@/pages/admin/AdminOrderDetailPage";
-import AdminSettingsPage from "@/pages/admin/AdminSettingsPage";
-import AdminContentPage from "@/pages/admin/AdminContentPage";
-import AdminAnalyticsPage from "@/pages/admin/AdminAnalyticsPage";
-import AdminLookbookPage from "@/pages/admin/AdminLookbookPage";
-import AdminLookbookFormPage from "@/pages/admin/AdminLookbookFormPage";
-import AdminPromoCodesPage from "@/pages/admin/AdminPromoCodesPage";
-import AdminReviewsPage from "@/pages/admin/AdminReviewsPage";
-import AdminStockAlertsPage from "@/pages/admin/AdminStockAlertsPage";
+const NotFound = lazy(() => import("@/pages/not-found"));
+const HomePage = lazy(() => import("@/pages/HomePage"));
+const CollectionsPage = lazy(() => import("@/pages/CollectionsPage"));
+const CollectionDetailPage = lazy(() => import("@/pages/CollectionDetailPage"));
+const ProductDetailPage = lazy(() => import("@/pages/ProductDetailPage"));
+const CartPage = lazy(() => import("@/pages/CartPage"));
+const CheckoutPage = lazy(() => import("@/pages/CheckoutPage"));
+const OrderConfirmationPage = lazy(() => import("@/pages/OrderConfirmationPage"));
+const SearchPage = lazy(() => import("@/pages/SearchPage"));
+const AccountPage = lazy(() => import("@/pages/AccountPage"));
+const AccountOrdersPage = lazy(() => import("@/pages/AccountOrdersPage"));
+const AccountWishlistPage = lazy(() => import("@/pages/AccountWishlistPage"));
+const AboutPage = lazy(() => import("@/pages/AboutPage"));
+const LookbookPage = lazy(() => import("@/pages/LookbookPage"));
+const SignInPage = lazy(() => import("@/pages/SignInPage"));
+const SignUpPage = lazy(() => import("@/pages/SignUpPage"));
+const AdminLoginPage = lazy(() => import("@/pages/admin/AdminLoginPage"));
+const AdminDashboardPage = lazy(() => import("@/pages/admin/AdminDashboardPage"));
+const AdminProductsPage = lazy(() => import("@/pages/admin/AdminProductsPage"));
+const AdminProductFormPage = lazy(() => import("@/pages/admin/AdminProductFormPage"));
+const AdminCollectionsPage = lazy(() => import("@/pages/admin/AdminCollectionsPage"));
+const AdminCollectionFormPage = lazy(() => import("@/pages/admin/AdminCollectionFormPage"));
+const AdminOrdersPage = lazy(() => import("@/pages/admin/AdminOrdersPage"));
+const AdminOrderDetailPage = lazy(() => import("@/pages/admin/AdminOrderDetailPage"));
+const AdminSettingsPage = lazy(() => import("@/pages/admin/AdminSettingsPage"));
+const AdminContentPage = lazy(() => import("@/pages/admin/AdminContentPage"));
+const AdminAnalyticsPage = lazy(() => import("@/pages/admin/AdminAnalyticsPage"));
+const AdminLookbookPage = lazy(() => import("@/pages/admin/AdminLookbookPage"));
+const AdminLookbookFormPage = lazy(() => import("@/pages/admin/AdminLookbookFormPage"));
+const AdminPromoCodesPage = lazy(() => import("@/pages/admin/AdminPromoCodesPage"));
+const AdminReviewsPage = lazy(() => import("@/pages/admin/AdminReviewsPage"));
+const AdminStockAlertsPage = lazy(() => import("@/pages/admin/AdminStockAlertsPage"));
 import CartDrawer from "@/components/CartDrawer";
 import QuickViewModal from "@/components/QuickViewModal";
 import CompareBar from "@/components/CompareBar";
 import CompareModal from "@/components/CompareModal";
+
+function RouteFallback() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background" role="status" aria-label="Loading page">
+      <div className="h-8 w-8 animate-spin rounded-full border-2 border-foreground/20 border-t-foreground" />
+    </div>
+  );
+}
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -69,7 +78,8 @@ function AnimatedRoutes() {
           exit="exit"
           style={{ minHeight: "100vh" }}
         >
-          <Switch>
+          <Suspense fallback={<RouteFallback />}>
+            <Switch>
             <Route path="/" component={HomePage} />
             <Route path="/collections" component={CollectionsPage} />
             <Route path="/collections/:slug" component={CollectionDetailPage} />
@@ -105,7 +115,8 @@ function AnimatedRoutes() {
             <Route path="/admin/reviews" component={AdminReviewsPage} />
             <Route path="/admin/stock-alerts" component={AdminStockAlertsPage} />
             <Route component={NotFound} />
-          </Switch>
+            </Switch>
+          </Suspense>
         </motion.div>
       </AnimatePresence>
 

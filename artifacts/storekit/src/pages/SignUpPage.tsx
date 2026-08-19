@@ -1,7 +1,12 @@
 import { SignUp } from "@clerk/react";
 import Layout from "@/components/Layout";
+import { AuthUnavailableState } from "@/components/AuthGuard";
+
+const clerkEnabled = Boolean(import.meta.env.VITE_CLERK_PUBLISHABLE_KEY);
 
 export default function SignUpPage() {
+  if (!clerkEnabled) return <AuthUnavailableState />;
+
   return (
     <Layout noFooter>
       <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">

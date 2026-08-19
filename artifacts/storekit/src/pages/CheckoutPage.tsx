@@ -4,7 +4,6 @@ import { useLocation } from "wouter";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import Layout from "@/components/Layout";
-import { AuthGuard } from "@/components/AuthGuard";
 import { useCartStore } from "@/store/cartStore";
 import { formatPrice } from "@/lib/utils";
 import { useCreateOrder, useCreatePaymentIntent } from "@workspace/api-client-react";
@@ -32,6 +31,16 @@ interface AppConfig {
 
 // Fetched once and cached here (module-level)
 let stripePromiseCache: ReturnType<typeof loadStripe> | null = null;
+const GUEST_ID_KEY = "sk-guest-id";
+
+function getGuestUserId(): string {
+  if (typeof window === "undefined") return "guest-server";
+  const existing = window.localStorage.getItem(GUEST_ID_KEY);
+  if (existing) return existing;
+  const generated = `guest-${globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`}`;
+  window.localStorage.setItem(GUEST_ID_KEY, generated);
+  return generated;
+}
 
 function CheckoutContent() {
   const { t } = useTranslation();
@@ -47,8 +56,10 @@ function CheckoutContent() {
   const [appConfig, setAppConfig] = useState<AppConfig | null>(null);
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
 
-  const { items, subtotal, clearCart } = useCartStore();
+  const { items, clearCart } = useCartStore();
   const { user } = useUser();
+  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const [guestUserId] = useState(getGuestUserId);
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const createOrder = useCreateOrder();
@@ -103,7 +114,7 @@ function CheckoutContent() {
     try {
       const orderResult = await createOrder.mutateAsync({
         data: {
-          userId: user!.id,
+          userId: user?.id ?? guestUserId,
           items: items.map(i => ({ variantId: i.variantId, quantity: i.quantity })),
           shippingAddress: {
             fullName: shipping.fullName,
@@ -380,5 +391,5 @@ function CheckoutContent() {
 }
 
 export default function CheckoutPage() {
-  return <AuthGuard><CheckoutContent /></AuthGuard>;
+  return <CheckoutContent />;
 }

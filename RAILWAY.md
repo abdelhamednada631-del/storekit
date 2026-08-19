@@ -2,6 +2,8 @@
 
 StoreKit مجهز الآن ليُبنى من `Dockerfile` ويشغّل **الواجهة والـAPI في خدمة واحدة**. لا تحتاج إلى تشغيل Vite أو Express يدويًا، ولا إلى رفع ملفات `dist` إلى GitHub. Railway يقرأ `railway.json` تلقائيًا، يبني الصورة، يشغّل السيرفر، ثم يفحص `/healthz`.
 
+> **مهم لإصلاح Railway build:** صورة البناء والإنتاج تستخدم `node:22-bookworm-slim` بدل Alpine/musl. هذا يضمن توفر Rollup glibc native binary، بينما يتم نسخ `tsconfig.json` و`tsconfig.base.json` مع بنية الـworkspace كاملة. لا تضف Build Command مخصصًا في Railway؛ اترك Builder على `Dockerfile` كما يحدد `railway.json`.
+
 > **المطلوب فعليًا:** خدمة StoreKit + خدمة PostgreSQL داخل نفس مشروع Railway. قاعدة البيانات ليست خدمة خارجية يديرها العميل؛ Railway ينشئها داخل المشروع ويوفر `DATABASE_URL` للتطبيق.
 
 ## النشر الأول
@@ -58,7 +60,7 @@ https://YOUR-RAILWAY-DOMAIN.up.railway.app/healthz
 https://YOUR-RAILWAY-DOMAIN.up.railway.app/api/health
 ```
 
-يجب أن يعيد `/healthz` النص `ok`، وأن يعيد `/api/health` JSON يحتوي على `"ok": true`. إذا فشل deployment، راجع **Build Logs** أولًا ثم **Deploy Logs**؛ أكثر أسباب الفشل شيوعًا هي عدم ربط `DATABASE_URL` أو نسيان الضغط على Deploy بعد إضافة Reference Variable.
+يجب أن يعيد `/healthz` النص `ok`، وأن يعيد `/api/health` JSON يحتوي على `"ok": true`. إذا ظهر في سجل build القديم `@rollup/rollup-linux-x64-musl`، فهذا يعني أن Railway يبني commit قديمًا أو يستخدم إعداد Alpine قديمًا؛ تأكد من أن آخر commit هو إصلاح Dockerfile، ثم نفّذ Redeploy من آخر commit مع تنظيف build cache إن ظهر الخيار. أكثر أسباب الفشل شيوعًا بعد ذلك هي عدم ربط `DATABASE_URL` أو نسيان الضغط على Deploy بعد إضافة Reference Variable.
 
 ## التحديثات اللاحقة
 

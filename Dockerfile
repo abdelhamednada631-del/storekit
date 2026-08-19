@@ -1,10 +1,10 @@
 # ── Stage 1: Install ALL dependencies (dev + prod) ──────────────────────────
-FROM node:24-alpine AS deps
+FROM node:22-bookworm-slim AS deps
 WORKDIR /app
 
 RUN npm install -g pnpm@10
 
-COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json tsconfig.json tsconfig.base.json ./
 COPY lib/db/package.json                  ./lib/db/
 COPY lib/api-spec/package.json            ./lib/api-spec/
 COPY lib/api-zod/package.json             ./lib/api-zod/
@@ -35,7 +35,7 @@ COPY scripts/                  ./scripts/
 RUN pnpm --filter @workspace/api-server run build
 
 # ── Stage 4: Production runtime ───────────────────────────────────────────────
-FROM node:24-alpine AS runner
+FROM node:22-bookworm-slim AS runner
 WORKDIR /app
 
 # Sensible defaults — override any of these in Railway's Variables tab
@@ -46,18 +46,18 @@ ENV NODE_ENV=production \
     ADMIN_PASSWORD=storekit2024
 
 # Compiled API server
-COPY --from=api-builder  /app/artifacts/api-server/dist  ./dist/
-COPY --from=api-builder  /app/artifacts/api-server/package.json ./
+COPY --from=api-builder  /app/artifacts/api-server/dist  ./artifacts/api-server/dist/
+COPY --from=api-builder  /app/artifacts/api-server/package.json ./artifacts/api-server/
 
 # Built React frontend — served as static files by Express
 COPY --from=frontend-builder /app/artifacts/storekit/dist/public ./public/
 
 # Drizzle SQL migration files — applied automatically on startup
-COPY lib/db/drizzle ./drizzle/
+COPY lib/db/drizzle ./artifacts/api-server/drizzle/
 
 # Install only production dependencies
 RUN npm install -g pnpm@10
-COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json tsconfig.json tsconfig.base.json ./
 COPY lib/db/package.json              ./lib/db/
 COPY lib/api-spec/package.json        ./lib/api-spec/
 COPY lib/api-zod/package.json         ./lib/api-zod/
@@ -72,4 +72,4 @@ RUN mkdir -p /app/uploads
 EXPOSE 8080
 
 # On every start: migrate → seed (if empty) → serve
-CMD ["node", "--enable-source-maps", "./dist/index.mjs"]
+CMD ["node", "--enable-source-maps", "./artifacts/api-server/dist/index.mjs"]

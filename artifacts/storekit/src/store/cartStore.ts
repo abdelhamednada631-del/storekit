@@ -23,8 +23,6 @@ interface CartState {
   clearCart: () => void; 
   openCart: () => void; 
   closeCart: () => void; 
-  get itemCount(): number; 
-  get subtotal(): number; 
 }
 
 export const useCartStore = create<CartState>()(persist((set, get) => ({
@@ -40,6 +38,4 @@ export const useCartStore = create<CartState>()(persist((set, get) => ({
   clearCart: () => set({ items: [] }),
   openCart: () => set({ isOpen: true }),
   closeCart: () => set({ isOpen: false }),
-  get itemCount() { return get().items.reduce((sum, i) => sum + i.quantity, 0); },
-  get subtotal() { return get().items.reduce((sum, i) => sum + i.price * i.quantity, 0); },
 }), { name: 'storekit-cart' }));
