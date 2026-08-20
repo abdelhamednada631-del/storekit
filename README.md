@@ -2,7 +2,7 @@
 
 Luxury fashion storefront with a quiet-luxury React storefront and Express API served from one production Railway service.
 
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/github?repo=abdelhamednada631-del/storekit)
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/github?repo=abbn7/storekit-production-ready)
 
 ## One-click deployment
 

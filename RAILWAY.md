@@ -10,7 +10,7 @@ StoreKit مجهز الآن ليُبنى من `Dockerfile` ويشغّل **الو�
 
 ## النشر الأول — ضغطة واحدة
 
-افتح [زر Deploy on Railway](https://railway.com/new/github?repo=abdelhamednada631-del/storekit)، اختر المستودع إذا طلب Railway ذلك، ثم اضغط **Deploy**. اترك Root Directory على جذر المستودع، ولا تضف Build Command أو Start Command أو خدمة PostgreSQL يدويًا؛ `railway.json` و`Dockerfile` يضبطان البناء، entrypoint، healthcheck، وrestart policy تلقائيًا. بعد اكتمال البناء سيقوم التطبيق بتهيئة PostgreSQL الداخلي، تشغيل migrations وseed، ثم يصبح المتجر متاحًا من نفس الخدمة.
+افتح [زر Deploy on Railway](https://railway.com/new/github?repo=abbn7/storekit-production-ready)، اختر المستودع إذا طلب Railway ذلك، ثم اضغط **Deploy**. اترك Root Directory على جذر المستودع، ولا تضف Build Command أو Start Command أو خدمة PostgreSQL يدويًا؛ `railway.json` و`Dockerfile` يضبطان البناء، entrypoint، healthcheck، وrestart policy تلقائيًا. بعد اكتمال البناء سيقوم التطبيق بتهيئة PostgreSQL الداخلي، تشغيل migrations وseed، ثم يصبح المتجر متاحًا من نفس الخدمة.
 
 إذا كانت لديك Project موجودة بالفعل، أوقف أو احذف الخدمات القديمة باسم `@workspace/*` أو أي PostgreSQL منفصل لم تعد تحتاجه، ثم اعمل Redeploy من commit حديث بعد الدمج. الملف `nixpacks.toml` موجود كمسار احتياطي ويشغّل `build:production` فقط إذا تم اختيار Nixpacks، لكنه لا يبرر إنشاء services منفصلة.
 
