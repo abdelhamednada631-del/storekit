@@ -66,7 +66,7 @@ Replit هو الخيار الأسهل لأن قاعدة البيانات وال�
 
 ## 🚀 النشر على Railway — ضغطة واحدة
 
-1. افتح [زر Deploy on Railway](https://railway.com/new/github?repo=abbn7/storekit-production-ready) واختر المستودع إذا طلب Railway ذلك.
+1. افتح [زر Deploy on Railway](https://railway.com/new/github?repo=abdelhamednada631-del/storekit) واختر المستودع إذا طلب Railway ذلك.
 2. اترك Root Directory على جذر المستودع، ولا تضف PostgreSQL service أو Build Command أو Start Command يدويًا.
 3. اضغط **Deploy**. سيبني `Dockerfile` خدمة واحدة، ويبدأ `scripts/start-production.sh` PostgreSQL الداخلي عند غياب `DATABASE_URL`، ثم يشغّل migrations وseed ويعرض المتجر والـAPI.
 4. للاستخدام الإنتاجي مع الحفاظ على البيانات، أضف Volume اختياريًا إلى `/app/data` واضبط `UPLOAD_DIR=/app/data/uploads`، أو استخدم PostgreSQL خارجيًا عبر `DATABASE_URL`.
